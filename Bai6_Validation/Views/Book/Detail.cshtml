@@ -1,0 +1,41 @@
+﻿@model Bai6_Validation.Models.Book
+
+@{
+    ViewData["Title"] = "Chi tiết sách";
+}
+
+<h2>Chi tiết sách</h2>
+
+<div class="card" style="width: 60%; margin-top: 20px;">
+    <div class="card-header bg-primary text-white">
+        <h4>Thông tin sách</h4>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered">
+            <tr>
+                <th style="width: 150px;">Mã sách (ID):</th>
+                <td>@Model.Id</td>
+            </tr>
+            <tr>
+                <th>Tên sách:</th>
+                <td>@Model.Ten</td>
+            </tr>
+            <tr>
+                <th>Giá:</th>
+                <td>@Model.Gia.ToString("N0") USD</td>
+            </tr>
+            <tr>
+                <th>Tác giả:</th>
+                <td>@(string.IsNullOrEmpty(Model.TacGia) ? "Chưa cập nhật" : Model.TacGia)</td>
+            </tr>
+            <tr>
+                <th>Nhà xuất bản:</th>
+                <td>@(string.IsNullOrEmpty(Model.NhaXuatBan) ? "Chưa cập nhật" : Model.NhaXuatBan)</td>
+            </tr>
+        </table>
+    </div>
+    <div class="card-footer">
+        <a asp-action="Index" class="btn btn-secondary">Quay lại danh sách</a>
+        <a asp-action="Create" class="btn btn-primary">Thêm sách mới</a>
+    </div>
+</div>
