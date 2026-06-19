@@ -1,0 +1,45 @@
+﻿@model Bai6_Validation.Models.Event_bit240215
+
+@{
+    ViewData["Title"] = "Xóa sự kiện";
+}
+
+<h2>🗑️ Xóa sự kiện</h2>
+
+<div class="alert alert-danger">
+    <h4>⚠️ Bạn có chắc chắn muốn xóa sự kiện này?</h4>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <table class="table table-bordered">
+            <tr>
+                <th style="width:200px">ID</th>
+                <td>@Model.Id</td>
+            </tr>
+            <tr>
+                <th>Tên sự kiện</th>
+                <td>@Model.Name</td>
+            </tr>
+            <tr>
+                <th>Địa điểm</th>
+                <td>@Model.Location</td>
+            </tr>
+            <tr>
+                <th>Ngày bắt đầu</th>
+                <td>@Model.StartDate.ToString("dd/MM/yyyy HH:mm")</td>
+            </tr>
+            <tr>
+                <th>Ngày kết thúc</th>
+                <td>@Model.EndDate.ToString("dd/MM/yyyy HH:mm")</td>
+            </tr>
+        </table>
+    </div>
+    <div class="card-footer">
+        <form asp-action="Delete" method="post">
+            <input type="hidden" asp-for="Id" />
+            <button type="submit" class="btn btn-danger">✅ Xác nhận xóa</button>
+            <a asp-action="Index" class="btn btn-secondary">❌ Hủy bỏ</a>
+        </form>
+    </div>
+</div>

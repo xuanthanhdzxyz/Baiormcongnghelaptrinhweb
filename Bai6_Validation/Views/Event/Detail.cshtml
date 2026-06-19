@@ -1,0 +1,116 @@
+﻿@model Bai6_Validation.Models.Event_bit240215
+
+@{
+    ViewData["Title"] = "Chi tiết sự kiện";
+}
+
+<h2>📄 Chi tiết sự kiện</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">✅ @TempData["SuccessMessage"]</div>
+}
+
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <h4>@Model.Name</h4>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered">
+            <tr>
+                <th style="width:200px">ID</th>
+                <td>@Model.Id</td>
+            </tr>
+            <tr>
+                <th>Tên sự kiện</th>
+                <td>@Model.Name</td>
+            </tr>
+            <tr>
+                <th>Giá</th>
+                <td>@Model.Price.ToString("N0") VND</td>
+            </tr>
+            <tr>
+                <th>Địa điểm</th>
+                <td>@Model.Location</td>
+            </tr>
+            <tr>
+                <th>Ngày bắt đầu</th>
+                <td>@Model.StartDate.ToString("dd/MM/yyyy HH:mm")</td>
+            </tr>
+            <tr>
+                <th>Ngày kết thúc</th>
+                <td>@Model.EndDate.ToString("dd/MM/yyyy HH:mm")</td>
+            </tr>
+            <tr>
+                <th>Loại sự kiện</th>
+                <td>@Model.EventCategory?.Name</td>
+            </tr>
+            <tr>
+                <th>Mô tả</th>
+                <td>@Model.Description</td>
+            </tr>
+            <tr>
+                <th>Trạng thái</th>
+                <td>
+                    @{
+                        var now = DateTime.Now;
+                        string status = Model.StartDate > now ? "Sắp diễn ra" :
+                                       Model.EndDate < now ? "Đã kết thúc" : "Đang diễn ra";
+                        string statusClass = Model.StartDate > now ? "bg-warning" :
+                                            Model.EndDate < now ? "bg-secondary" : "bg-success";
+                    }
+                    <span class="badge @statusClass text-white">@status</span>
+                </td>
+            </tr>
+        </table>
+
+        <!-- Hình ảnh -->
+        <h5>🖼️ Hình ảnh</h5>
+        @if (Model.EventImages != null && Model.EventImages.Any())
+        {
+            <div class="row">
+                @foreach (var img in Model.EventImages)
+                {
+                    <div class="col-md-3 mb-3">
+                        <div class="card">
+                            <img src="@img.ImageUrl" class="card-img-top" alt="Event image" 
+                                 style="height:150px; object-fit:cover;" 
+                                 onerror="this.src='https://via.placeholder.com/150'"/>
+                            <div class="card-body text-center">
+                                @if (img.IsThumbnail)
+                                {
+                                    <span class="badge bg-success">⭐ Đại diện</span>
+                                }
+                                else
+                                {
+                                    <form asp-action="SetThumbnail" method="post" style="display:inline">
+                                        <input type="hidden" name="eventId" value="@Model.Id" />
+                                        <input type="hidden" name="imageId" value="@img.Id" />
+                                        <button type="submit" class="btn btn-sm btn-outline-primary">
+                                            Chọn làm đại diện
+                                        </button>
+                                    </form>
+                                }
+                                <form asp-action="DeleteImage" method="post" style="display:inline">
+                                    <input type="hidden" name="id" value="@img.Id" />
+                                    <button type="submit" class="btn btn-sm btn-danger">🗑️</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-info">Chưa có ảnh cho sự kiện này.</div>
+        }
+
+        <a asp-action="AddImage" asp-route-eventId="@Model.Id" class="btn btn-primary">➕ Thêm ảnh</a>
+    </div>
+    <div class="card-footer">
+        <a asp-action="Index" class="btn btn-secondary">↩️ Quay lại danh sách</a>
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">✏️ Sửa</a>
+        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">🗑️ Xóa</a>
+    </div>
+</div>

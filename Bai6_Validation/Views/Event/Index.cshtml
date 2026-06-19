@@ -1,0 +1,124 @@
+﻿@model IEnumerable<Bai6_Validation.Models.Event_bit240215>
+
+@{
+    ViewData["Title"] = "Danh sách sự kiện";
+}
+
+<h2>📅 Danh sách sự kiện</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        ✅ @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        ❌ @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">➕ Thêm sự kiện mới</a>
+</p>
+
+<!-- Form tìm kiếm -->
+<div class="card mb-3">
+    <div class="card-header bg-light">
+        <h5>🔍 Tìm kiếm & Lọc</h5>
+    </div>
+    <div class="card-body">
+        <form method="get" asp-action="Index">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Tìm kiếm</label>
+                    <input type="text" name="searchTerm" class="form-control" 
+                           placeholder="Tên hoặc địa điểm..." 
+                           value="@ViewBag.SearchTerm" />
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Loại sự kiện</label>
+                    <select name="categoryId" class="form-select" asp-items="ViewBag.Categories">
+                        <option value="">Tất cả</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Từ ngày</label>
+                    <input type="date" name="startDateFrom" class="form-control" 
+                           value="@ViewBag.StartDateFrom" />
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Đến ngày</label>
+                    <input type="date" name="startDateTo" class="form-control" 
+                           value="@ViewBag.StartDateTo" />
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Sắp xếp</label>
+                    <select name="sortBy" class="form-select">
+                        <option value="startDate_asc" selected="@(ViewBag.SortBy == "startDate_asc")">Ngày gần nhất</option>
+                        <option value="price_asc" selected="@(ViewBag.SortBy == "price_asc")">Giá tăng dần</option>
+                        <option value="price_desc" selected="@(ViewBag.SortBy == "price_desc")">Giá giảm dần</option>
+                    </select>
+                </div>
+                <div class="col-md-1 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">🔍</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Không tìm thấy sự kiện nào.</div>
+}
+else
+{
+    <table class="table table-striped table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Tên sự kiện</th>
+                <th>Giá</th>
+                <th>Địa điểm</th>
+                <th>Loại</th>
+                <th>Ngày bắt đầu</th>
+                <th>Ngày kết thúc</th>
+                <th>Trạng thái</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                var now = DateTime.Now;
+                string status = item.StartDate > now ? "Sắp diễn ra" :
+                               item.EndDate < now ? "Đã kết thúc" : "Đang diễn ra";
+                string statusClass = item.StartDate > now ? "bg-warning" :
+                                    item.EndDate < now ? "bg-secondary" : "bg-success";
+
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.Name</td>
+                    <td>@item.Price.ToString("N0") VND</td>
+                    <td>@item.Location</td>
+                    <td>@item.EventCategory?.Name</td>
+                    <td>@item.StartDate.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@item.EndDate.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>
+                        <span class="badge @statusClass text-white">@status</span>
+                    </td>
+                    <td>
+                        <a asp-action="Detail" asp-route-id="@item.Id" class="btn btn-info btn-sm">📄</a>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">✏️</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">🗑️</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
